@@ -1638,9 +1638,9 @@ Vector3 VoxelLightBaker::_compute_ray_trace_at_pos(const Vector3 &p_pos, const V
 
 	for (int i = 0; i < samples; i++) {
 
-		float random_angle1 = (((rand() % 65535) / 65535.0) * 2.0 - 1.0) * spread;
+		float random_angle1 = (((Math::rand() % 65535) / 65535.0) * 2.0 - 1.0) * spread;
 		Vector3 axis(0, sin(random_angle1), cos(random_angle1));
-		float random_angle2 = ((rand() % 65535) / 65535.0) * Math_PI * 2.0;
+		float random_angle2 = ((Math::rand() % 65535) / 65535.0) * Math_PI * 2.0;
 		Basis rot(Vector3(0, 0, 1), random_angle2);
 		axis = rot.xform(axis);
 
