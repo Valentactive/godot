@@ -1029,7 +1029,7 @@ void VoxelLightBaker::plot_light_spot(const Vector3 &p_pos, const Vector3 &p_axi
 			continue; // too far away
 		}
 
-		float att = Math::pow(1.0 - angle / p_spot_angle, p_spot_attenuation);
+		float att = Math::pow(1.0f - angle / p_spot_angle, p_spot_attenuation);
 
 		{
 			float d = light_pos.distance_to(to);
