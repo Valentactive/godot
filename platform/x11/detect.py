@@ -58,6 +58,8 @@ def get_opts():
 
     return [
         BoolVariable('use_llvm', 'Use the LLVM compiler', False),
+        BoolVariable('use_lld', 'Use the LLD linker', False),
+        BoolVariable('use_thinlto', 'Use ThinLTO', False),
         BoolVariable('use_static_cpp', 'Link libgcc and libstdc++ statically for better portability', False),
         BoolVariable('use_ubsan', 'Use LLVM/GCC compiler undefined behavior sanitizer (UBSAN)', False),
         BoolVariable('use_asan', 'Use LLVM/GCC compiler address sanitizer (ASAN))', False),
@@ -129,6 +131,12 @@ def configure(env):
             env["LINK"] = "clang++"
         env.Append(CPPFLAGS=['-DTYPED_METHOD_BIND'])
         env.extra_suffix = ".llvm" + env.extra_suffix
+        if env['use_lld']:
+            env.Append(LINKFLAGS=['-fuse-ld=lld'])
+            if env['use_thinlto']:
+                # A Convenience so you don't need to write use_lto when using SCons
+                env['use_lto'] = True
+
 
 
     if env['use_ubsan'] or env['use_asan'] or env['use_lsan']:
@@ -151,7 +159,10 @@ def configure(env):
         if not env['use_llvm'] and env.GetOption("num_jobs") > 1:
             env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
         else:
-            env.Append(LINKFLAGS=['-flto'])
+            if env['use_lld'] and env['use_thinlto']:
+                env.Append(LINKFLAGS=['-flto=thin'])
+            else:
+                env.Append(LINKFLAGS=['-flto'])
         if not env['use_llvm']:
             env['RANLIB'] = 'gcc-ranlib'
             env['AR'] = 'gcc-ar'
