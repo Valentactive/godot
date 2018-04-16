@@ -160,7 +160,10 @@ def configure(env):
             env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
         else:
             if env['use_lld'] and env['use_thinlto']:
+                env.Append(CCFLAGS=['-flto=thin'])
                 env.Append(LINKFLAGS=['-flto=thin'])
+                if not ARGUMENTS.get('thinlto_jobs', '0') == '0':
+                    env.Append(LINKFLAGS=['-W1,--thinlto-jobs='+ ARGUMENTS.get("thinlto_jobs","0")])
             else:
                 env.Append(LINKFLAGS=['-flto'])
         if not env['use_llvm']:
